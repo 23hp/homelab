@@ -21,10 +21,22 @@ http:
         referrerPolicy: "same-origin"
 
 tls:
+  certResolver: letsencrypt
+  domains:
+    - main: "{{ env `DOMAIN_NAME` }}"
+      sans: [ "*.{{ env `DOMAIN_NAME` }}" ]
   options:
     default:
       # 强制使用 TLS 1.3 (目前最安全的版本，减少握手时的明文信息)
       minVersion: VersionTLS13
       # 开启严格 SNI (防止未经授权的证书探测扫描)
       sniStrict: true
-      
+
+entryPoints:
+  certificatesresolvers:
+    letsencrypt:
+      acme:
+        email: "{{ env `ACME_EMAIL` }}"
+        storage: "/letsencrypt/acme.json"
+        dnsChallenge:
+          provider: cloudflare
