@@ -1,0 +1,42 @@
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+    http:
+      # 默认给所有路由挂载安全响应头中间件
+      middlewares:
+        - "security-headers@file"
+      # 默认应用高隐私 TLS 配置
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "{{ env `DOMAIN_NAME` }}"
+            sans: [ "*.{{ env `DOMAIN_NAME` }}" ]
+
+providers:
+  file: # 开启文件监控，以便加载下方的动态配置
+    directory: /etc/traefik/dynamic
+    watch: true
+  docker:
+    exposedByDefault: false
+
+certificatesresolvers:
+  letsencrypt:
+    acme:
+      email: "{{ env `ACME_EMAIL` }}"
+      storage: "/letsencrypt/acme.json"
+      dnsChallenge:
+        provider: cloudflare
+
+# Enable Healthcheck
+ping: {}
+
+
+

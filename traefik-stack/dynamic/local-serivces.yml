@@ -1,0 +1,31 @@
+http:
+  routers:
+    router:
+      # insecureSkipVerify: true
+      rule: 'Host(`router.{{ env "DOMAIN_NAME" }}`)'
+      entryPoints: ["websecure"]
+      service: "router-svc"
+    wifi:
+      # insecureSkipVerify: true
+      rule: 'Host(`wifi.{{ env "DOMAIN_NAME" }}`)'
+      entryPoints: ["websecure"]
+      service: "wifi-svc"
+    proxmox:
+      # insecureSkipVerify: true
+      rule: 'Host(`proxmox.{{ env "DOMAIN_NAME" }}`)'
+      entryPoints: ["websecure"]
+      service: "proxmox-svc"
+  services:
+    router-svc:
+      loadBalancer:
+        server:
+          url: "http://192.168.1.1"
+    wifi-svc:
+      loadBalancer:
+        server:
+          url: "http://192.168.1.2"
+    proxmox-svc:
+      loadBalancer:
+        server:
+          url: "https://192.168.1.3"
+          port: 8006
