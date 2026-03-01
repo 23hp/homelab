@@ -12,6 +12,8 @@ services:
       - cloudflare_api_token
     environment:
       - CF_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_api_token
+    env_file:
+      - "../.env"
     volumes:
       - "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
       - "./certs:/letsencrypt"

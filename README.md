@@ -11,7 +11,7 @@ podman info | grep -i socket
 在项目根目录下创建 .env，把所有的“变量”都藏在这里：
 ```Ini, TOML
     # 隐私信息与公共配置
-    MY_DOMAIN=yourdomain.com
+    DOMAIN_NAME=yourdomain.com
     ACME_EMAIL=your-email@example.com
 
 ```
