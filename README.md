@@ -12,7 +12,7 @@ podman info | grep -i socket
 ```Ini, TOML
     # 隐私信息与公共配置
     DOMAIN_NAME=yourdomain.com
-    ACME_EMAIL=your-email@example.com
+    TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL=your-email@example.com
 
 ```
 
