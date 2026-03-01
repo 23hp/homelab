@@ -1,3 +1,7 @@
+# Traefik static config: https://doc.traefik.io/traefik/reference/static-configuration/file/ 
+# supported nodes: global, serversTransport, entryPoints, providers, api, metrics, tracing, hostResolver, certificatesResolvers
+# User environment variables to set confidential information
+
 entryPoints:
   web:
     address: ":80"
@@ -10,21 +14,30 @@ entryPoints:
   websecure:
     address: ":443"
     http:
-      # 默认给所有路由挂载安全响应头中间件
       middlewares:
         - "security-headers@file"
-      # 默认应用高隐私 TLS 配置
       tls: {}
 
 providers:
-  file: # 开启文件监控，以便加载下方的动态配置
+  file: # monitor dynamic configuration changes in this directory
     directory: /etc/traefik/dynamic
     watch: true
   docker:
     exposedByDefault: false
 
-# Enable Healthcheck
-ping: {}
+ping: {} # Healthcheck
 
+log:
+  level: ERROR
 
+certificatesresolvers:
+  letsencrypt:
+    acme:
+      storage: "/letsencrypt/acme.json"
+      dnsChallenge:
+        provider: cloudflare
 
+# api:
+#   # Dashboard
+#   dashboard: true
+#   insecure: true

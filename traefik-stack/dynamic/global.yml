@@ -1,9 +1,7 @@
-log:
-  level: ERROR
-# api:
-#   # Dashboard
-#   dashboard: true
-#   insecure: true
+
+# Traefik dynamic config, supported nodes:
+# http (routers, services, middlewares), tcp, udp, tls
+
 http:
   middlewares:
     # 高强度安全响应头
@@ -32,10 +30,3 @@ tls:
       # 开启严格 SNI (防止未经授权的证书探测扫描)
       sniStrict: true
 
-certificatesresolvers:
-  letsencrypt:
-    acme:
-      email: "{{ env `ACME_EMAIL` }}"
-      storage: "/letsencrypt/acme.json"
-      dnsChallenge:
-        provider: cloudflare
