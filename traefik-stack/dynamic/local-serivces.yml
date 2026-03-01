@@ -1,10 +1,6 @@
 http:
   routers:
     router:
-      tls: # Wildcard Domain: apply once, use everywhere
-        domains:
-          - main: "{{ env `DOMAIN_NAME` }}"
-            sans: [ "*.{{ env `DOMAIN_NAME` }}" ]
       # insecureSkipVerify: true
       rule: 'Host(`router.{{ env "DOMAIN_NAME" }}`)'
       entryPoints: ["websecure"]
@@ -15,11 +11,10 @@ http:
       entryPoints: ["websecure"]
       service: "wifi-svc"
     proxmox:
-      # insecureSkipVerify: true
       rule: 'Host(`proxmox.{{ env "DOMAIN_NAME" }}`)'
       entryPoints: ["websecure"]
       service: "proxmox-svc"
-
+      
   services:
     router-svc:
       loadBalancer:

@@ -19,6 +19,13 @@ http:
         referrerPolicy: "same-origin"
 
 tls:
+  stores:
+      default:
+        defaultGeneratedCert:
+          resolver: letsencrypt
+          domain:
+            main: "{{ env `DOMAIN_NAME` }}"
+            sans: [ "*.{{ env `DOMAIN_NAME` }}" ]
   options:
     default:
       # 强制使用 TLS 1.3 (目前最安全的版本，减少握手时的明文信息)

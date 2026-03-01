@@ -28,17 +28,18 @@ providers:
 
 ping: {} # Healthcheck
 
+api:
+  # Dashboard
+  dashboard: true
+  insecure: true
 log:
-  level: ERROR
+  level: INFO # default level: ERROR
 
 certificatesresolvers:
   letsencrypt:
     acme:
       storage: "/letsencrypt/acme.json"
       dnsChallenge:
+        resolvers:
+            - "1.1.1.1:53"
         provider: cloudflare
-
-# api:
-#   # Dashboard
-#   dashboard: true
-#   insecure: true

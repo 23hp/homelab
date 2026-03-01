@@ -17,8 +17,8 @@ services:
       - "./certs:/letsencrypt"
       - "./traefik.yml:/etc/traefik/traefik.yml:ro"
       - "./dynamic:/etc/traefik/dynamic:ro"
-    labels:
-      - "traefik.enable=true"
+#    labels:
+#      - "traefik.enable=true"
     healthcheck:
       test: ["CMD", "traefik", "healthcheck"]
       interval: 10s
