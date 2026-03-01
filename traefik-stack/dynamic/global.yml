@@ -32,11 +32,10 @@ tls:
       # 开启严格 SNI (防止未经授权的证书探测扫描)
       sniStrict: true
 
-entryPoints:
-  certificatesresolvers:
-    letsencrypt:
-      acme:
-        email: "{{ env `ACME_EMAIL` }}"
-        storage: "/letsencrypt/acme.json"
-        dnsChallenge:
-          provider: cloudflare
+certificatesresolvers:
+  letsencrypt:
+    acme:
+      email: "{{ env `ACME_EMAIL` }}"
+      storage: "/letsencrypt/acme.json"
+      dnsChallenge:
+        provider: cloudflare

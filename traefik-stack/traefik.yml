@@ -15,8 +15,6 @@ entryPoints:
         - "security-headers@file"
       # 默认应用高隐私 TLS 配置
       tls: {}
-        
-
 
 providers:
   file: # 开启文件监控，以便加载下方的动态配置
@@ -24,8 +22,6 @@ providers:
     watch: true
   docker:
     exposedByDefault: false
-
-
 
 # Enable Healthcheck
 ping: {}
