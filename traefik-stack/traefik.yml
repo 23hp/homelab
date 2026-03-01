@@ -16,7 +16,8 @@ entryPoints:
     http:
       middlewares:
         - "security-headers@file"
-      tls: {}
+      tls: 
+        certResolver: letsencrypt
 
 providers:
   file: # monitor dynamic configuration changes in this directory

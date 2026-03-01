@@ -19,7 +19,6 @@ http:
         referrerPolicy: "same-origin"
 
 tls:
-  certResolver: letsencrypt
   domains:
     - main: "{{ env `DOMAIN_NAME` }}"
       sans: [ "*.{{ env `DOMAIN_NAME` }}" ]
