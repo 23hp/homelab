@@ -1,0 +1,27 @@
+services:
+  libretranslate:
+    container_name: libretranslate
+    image: libretranslate/libretranslate:latest
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', './venv/bin/python scripts/healthcheck.py']
+      interval: 10s
+      timeout: 4s
+      retries: 4
+      start_period: 5s
+    environment:
+      - LT_LOAD_ONLY=en,zh,de # zh-Hans
+      # - LT_UPDATE_MODELS=true
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.libretranslate.rule=Host(`translate.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.libretranslate.entrypoints=websecure"
+      - "traefik.http.services.libretranslate.loadbalancer.server.port=5000"
+
+networks:
+  traefik-public:
+    external: true
