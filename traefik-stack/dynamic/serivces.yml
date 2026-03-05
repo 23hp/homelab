@@ -1,0 +1,11 @@
+http:
+  routers:
+    libretranslate-router:
+      rule: 'Host(`translate.{{ env "DOMAIN_NAME" }}`)'
+      entryPoints: ["websecure"]
+      service: "libretranslate-svc"
+  services:
+    libretranslate-svc:
+      loadBalancer:
+        servers:
+          - url: "http://libretranslate:5000"
