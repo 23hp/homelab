@@ -1,4 +1,7 @@
 http:
+  serversTransports:
+    ignore-ssl:
+      insecureSkipVerify: true
   routers:
     router:
       # insecureSkipVerify: true
@@ -14,18 +17,25 @@ http:
       rule: 'Host(`proxmox.{{ env "DOMAIN_NAME" }}`)'
       entryPoints: ["websecure"]
       service: "proxmox-svc"
-      
+    dns:
+      rule: 'Host(`dns.{{ env "DOMAIN_NAME" }}`)'
+      entryPoints: ["websecure"]
+      service: "dns-svc"
   services:
     router-svc:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.1"
+          - url: "http://192.168.10.1"
     wifi-svc:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.2"
+          - url: "http://192.168.10.2"
     proxmox-svc:
       loadBalancer:
+        serversTransport: ignore-ssl
         servers:
-          - url: "https://192.168.1.3"
-            port: 8006
+          - url: "https://192.168.10.3:8006"
+    dns-svc:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.10.4:5380"
