@@ -11,7 +11,7 @@ services:
     secrets:
       - cloudflare_api_token
     env_file:
-      - "../.env"
+      - "./.env"
     volumes:
       - "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
       - "./certs:/letsencrypt"

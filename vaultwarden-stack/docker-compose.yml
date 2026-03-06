@@ -1,0 +1,30 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest #latest-alpine
+    container_name: vaultwarden
+    restart: always
+    networks:
+      - traefik-public
+    secrets:
+      - admin_token
+    env_file:
+      - "./.env"
+    environment:
+      - SIGNUPS_ALLOWED=true
+      - DOMAIN=https://vault.${DOMAIN_NAME}
+      # - ADMIN_TOKEN_FILE=/run/secrets/admin_token
+    volumes:
+      - "./data:/data"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vaultwarden.rule=Host(`vault.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.vaultwarden.entrypoints=websecure"
+      - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+
+networks:
+  traefik-public:
+    external: true
+
+secrets:
+  admin_token:
+    file: ../secrets/vaultwarden_admin_token.txt
