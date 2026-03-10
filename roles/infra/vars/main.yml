@@ -1,0 +1,4 @@
+---
+infra_physical_iface: "enp1s0"
+infra_vlan_id: 20
+infra_homelab_public_key: "~/.ssh/homelab.pub"
