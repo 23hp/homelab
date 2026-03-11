@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
+        "*.container.j2": "ini",
+        "*.container": "ini",
+        "*.volume.j2": "ini",
+        "*.network.j2": "ini"
+        
+    }
+}
