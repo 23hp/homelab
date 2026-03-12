@@ -1,0 +1,142 @@
+#!/bin/bash
+# combustion: network prepare
+# script generated with https://opensuse.github.io/fuel-ignition/
+
+DISK_PASSWORD=''
+ROOT_ENCRYPTED_PASSWORD=''
+ROOT_SSH_KEY=""
+PODMAN_SSH_KEY=""
+
+if [ "${1-}" = "--prepare" ]; then
+  # We set disk-encryption-tool-dracut.encryption credential to
+  # "force".  This will make disk-encryption-tool-dracut force the
+  # encryption, ignoring that Combusion configured the system, and
+  # will skip the permission countdown
+  #
+  # After the encryption the recovery key is registered in the
+  # kernel keyring %user:cryptenroll
+  mkdir -p /run/credstore
+  echo "force" > /run/credstore/disk-encryption-tool-dracut.encrypt
+
+  exit 0
+fi
+
+# Redirect output to the console
+exec > >(exec tee -a /dev/tty0) 2>&1
+
+mount /home
+
+# Configuring user: root ...
+echo "root:$ROOT_ENCRYPTED_PASSWORD" | chpasswd -e
+# Configure SSH keys for root
+mkdir -m 700 -p "/root/.ssh"
+echo $ROOT_SSH_KEY > "/root/.ssh/authorized_keys"
+# Set correct ownership and permissions
+chown -R root:root "/root/.ssh"
+chmod 600 "/root/.ssh/authorized_keys"
+
+# Configuring user: podman ...
+useradd -m -s /bin/bash podman
+
+# Configure SSH keys for podman
+mkdir -m 700 -p "/home/podman/.ssh"
+echo $PODMAN_SSH_KEY > "/home/podman/.ssh/authorized_keys"
+# Set correct ownership and permissions
+chown -R podman:podman "/home/podman/.ssh"
+chmod 600 "/home/podman/.ssh/authorized_keys"
+
+umount /home
+
+# Language
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+chmod 644 /etc/locale.conf
+
+# Disk Encryption
+#
+# Create a valid machine-id, as this will be required to create later
+# the host secret
+systemd-machine-id-setup
+# We want to persist the host secret key created via systemd-cred
+# (/var/lib/systemd/credential.secret)
+mount /var
+mkdir -p /etc/credstore.encrypted
+credential="$(mktemp disk-encryption-tool.XXXXXXXXXX)"
+# Enroll recovery key
+echo "1" > "$credential"
+systemd-creds encrypt --name=sdbootutil-enroll.rk "$credential" \
+               /etc/credstore.encrypted/sdbootutil-enroll.rk
+# Enroll extra password
+echo $DISK_PASSWORD > "$credential"
+systemd-creds encrypt --name=sdbootutil-enroll.pw "$credential" \
+               /etc/credstore.encrypted/sdbootutil-enroll.pw
+# Enroll TPM2
+echo "1" > "$credential"
+systemd-creds encrypt --name=sdbootutil-enroll.tpm2 "$credential" \
+             /etc/credstore.encrypted/sdbootutil-enroll.tpm2
+shred -u "$credential"
+# Umount back /var to not confuse tukit later
+umount /var
+
+# Keyboard
+test -f /etc/vconsole.conf && FONT=$(grep ^FONT= /etc/vconsole.conf)
+systemd-firstboot --force --keymap=us
+test -n "$FONT" && echo "$FONT" >> /etc/vconsole.conf
+
+# Timezone
+systemd-firstboot --force --timezone=Europe/Amsterdam
+
+# Configure SSH daemon to disable password authentication
+install -m 644 /dev/stdin /etc/ssh/sshd_config.d/00-hardened.conf <<EOF
+PasswordAuthentication no
+EOF
+
+echo "Optimizing /etc/fstab mount options..."
+sed -i '/btrfs/ s/subvol=/compress=zstd:3,noatime,subvol=/' /etc/fstab
+
+echo "Applying kernel sysctl optimizations..."
+install -m 644 /dev/stdin /etc/sysctl.d/90-nuc-server.conf <<EOF
+vm.swappiness = 10
+EOF
+
+# for SSD longevity: keep logs in memory, limit size and retention, and rate limit
+echo "Configuring volatile journald storage..."
+mkdir -p /etc/systemd/journald.conf.d/
+install -m 600 /dev/stdin /etc/systemd/journald.conf.d/10-ssd-protection.conf <<EOF
+[Journal]
+Storage=volatile
+SystemMaxUse=200M
+MaxRetentionSec=1month
+RateLimitIntervalSec=30s
+RateLimitBurst=10000
+EOF
+
+
+# Allow unprivileged users to bind lower ports
+install -m 644 /dev/stdin /etc/sysctl.d/99-unprivileged-port.conf <<EOF
+net.ipv4.ip_unprivileged_port_start = 53
+EOF
+
+# Configure Registry Mirrors
+install -m 644 /dev/stdin /etc/containers/registries.conf <<EOF
+unqualified-search-registries = ["docker.io", "quay.io"]
+EOF
+
+# Configure subuid/subgid for Rootless mode
+for file in /etc/subuid /etc/subgid; do
+    echo "podman:100000:65536" > "$file"
+done
+
+# Ensure user linger is enabled for rootless containers
+install -m 644 /dev/null /var/lib/systemd/linger/podman
+
+# shorten boot time
+# sed -i 's/^GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=1/' /etc/default/grub
+# grub2-mkconfig -o /boot/grub2/grub.cfg
+
+# Leave a marker
+echo "Configured with combustion" > /etc/issue.d/85-combustion.conf
+echo "Configured with combustion" > /etc/issue.d/85-combustion.issue
+
+# Close outputs and wait for tee to finish.
+exec 1>&- 2>&-; wait;
+
