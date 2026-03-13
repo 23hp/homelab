@@ -1,0 +1,5 @@
+[Unit]
+Description=Traefik certificates storage
+
+[Volume]
+Label=service=reverse-proxy

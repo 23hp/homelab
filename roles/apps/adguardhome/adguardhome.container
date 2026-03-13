@@ -8,6 +8,9 @@ ContainerName=adguardhome
 PublishPort=53:53/udp
 PublishPort=53:53/tcp
 
+# after proxy_net became internel, add extra network to make it work
+Network=proxy_net
+
 Volume=%h/.config/adguardhome:/opt/adguardhome/conf:z
 Volume=adguardhome.volume:/opt/adguardhome/work
 

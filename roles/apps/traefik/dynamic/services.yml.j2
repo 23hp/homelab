@@ -1,0 +1,16 @@
+http:
+  routers:
+    traefik-dashboard:
+      rule: "Host(`traefik.{{ homelab_domain }}`)"
+      entryPoints: ["websecure"]
+      service: api@internal
+    adguardhome-router:
+      rule: 'Host(`dns.{{ homelab_domain }}`)'
+      entryPoints: ["websecure"]
+      service: "adguardhome-svc"
+    
+  services:
+    adguardhome-svc:
+      loadBalancer:
+        servers:
+          - url: "http://adguardhome:20000"

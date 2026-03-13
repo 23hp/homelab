@@ -1,5 +1,9 @@
 - name: Home Server Stack (Rootless Podman)
   hosts: homelab
+  vars:
+    my_apps:
+      - traefik
+      - adguardhome
   tasks:
     - name: Setup Podman environment
       ansible.builtin.include_role:
@@ -17,4 +21,7 @@
       ansible.builtin.include_role:
         name: apps
       vars:
-        apps_name: adguardhome
+        apps_name: "{{ app_to_deploy }}"
+      loop: "{{ my_apps }}"
+      loop_control:
+        loop_var: app_to_deploy

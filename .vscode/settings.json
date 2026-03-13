@@ -11,6 +11,7 @@
         "*.network": "ini",
         "*.quadlets": "ini",
         "*.yaml.j2": "yaml",
+        "*.yml.j2": "yaml",
     },
     "ansible.python.interpreterPath": "/Users/albert/homelab/.venv/bin/python",
     "ansible.lightspeed.enabled": false,

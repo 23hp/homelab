@@ -1,0 +1,29 @@
+
+# Traefik dynamic config, supported nodes:
+# http (routers, services, middlewares), tcp, udp, tls
+
+http:
+  middlewares:
+    security-headers:
+      headers:
+        # HSTS 
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        frameDeny: true
+        contentTypeNosniff: true
+        referrerPolicy: "same-origin"
+
+tls:
+  stores:
+      default:
+        defaultGeneratedCert:
+          resolver: letsencrypt
+          domain:
+            main: "{{ homelab_domain }}"
+            sans: [ "*.{{ homelab_domain }}" ]
+  options:
+    default:
+      minVersion: VersionTLS13
+      sniStrict: true
+

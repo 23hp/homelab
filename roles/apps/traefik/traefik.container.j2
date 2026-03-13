@@ -1,0 +1,33 @@
+[Unit]
+Description=Traefik Reverse Proxy
+
+[Container]
+User=0
+Image=docker.io/traefik:latest
+ContainerName=traefik
+
+PublishPort=80:80
+PublishPort=443:443
+PublishPort=443:443/udp
+
+Network=proxy_net
+Volume=traefik-certs.volume:/etc/traefik/acme
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
+Volume=%h/.config/traefik/static-config.yml:/etc/traefik/traefik.yml:ro,Z
+Volume=%h/.config/traefik/dynamic:/etc/traefik/dynamic:ro,Z
+
+#TODO move tls logic out
+Environment=CF_DNS_API_TOKEN={{ cloudflare_token }}
+
+Annotation=io.containers.autoupdate=registry
+
+Label=service=reverse-proxy
+
+#TODO: adding health checks
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+

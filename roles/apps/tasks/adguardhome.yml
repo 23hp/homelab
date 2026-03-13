@@ -1,10 +1,4 @@
-# - name: "Copy application configuration"
-#   ansible.builtin.copy:
-#     src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
-#     dest: "~/.config/{{ apps_name }}/"
-#     mode: '0644'
-#   notify: "Restart app"
-- name: "Deploy configuration files (Template-based)"
+- name: "Deploy configuration files (Template-based) - {{ apps_name }}"
   ansible.builtin.template:
     src: "{{ role_path }}/{{ apps_name }}/AdGuardHome.yaml.j2"
     dest: "~/.config/{{ apps_name }}/AdGuardHome.yaml"
@@ -12,7 +6,7 @@
   notify: "Restart app"
   no_log: true
 
-- name: "Copy Quadlet files"
+- name: "Copy Quadlet files - {{ apps_name }}"
   ansible.builtin.copy:
     src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
     dest: "~/.config/containers/systemd/"

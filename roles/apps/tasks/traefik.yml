@@ -1,0 +1,39 @@
+- name: "Copy static Traefik configuration"
+  ansible.builtin.copy:
+    src: "{{ role_path }}/{{ apps_name }}/static-config.yml"
+    dest: "~/.config/{{ apps_name }}/"
+    mode: '0644'
+  notify: "Restart app"
+
+- name: "Ensure dynamic Traefik configuration directory exists"
+  ansible.builtin.file:
+    path: "~/.config/{{ apps_name }}/dynamic"
+    state: directory
+    mode: '0700'
+
+- name: "Copy dynamic Traefik configuration files"
+  ansible.builtin.template:
+    src: "{{ role_path }}/{{ apps_name }}/dynamic/{{ item }}.yml.j2"
+    dest: "~/.config/{{ apps_name }}/dynamic/{{ item }}.yml"
+    mode: '0600'
+  no_log: true
+  loop:
+    - "global"
+    - "services"
+
+- name: "Copy Quadlet .container file"
+  ansible.builtin.template:
+    src: "{{ role_path }}/{{ apps_name }}/{{ apps_name }}.container.j2"
+    dest: "~/.config/containers/systemd/{{ apps_name }}.container"
+    mode: '0600'
+  notify: "Restart app"
+
+- name: "Copy Quadlet files"
+  ansible.builtin.copy:
+    src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
+    dest: "~/.config/containers/systemd/"
+    mode: '600'
+  notify: "Restart app"
+  loop:
+    - "{{ apps_name }}.network"
+    - "{{ apps_name }}-certs.volume"

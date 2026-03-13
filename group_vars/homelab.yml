@@ -3,3 +3,7 @@ vault_plugin: "community.general.bitwarden"
 adguard_user: "{{ lookup(vault_plugin, 'AdGuard_Home', field='username') | first  }}"
 _adguard_raw_password: "{{ lookup(vault_plugin, 'AdGuard_Home', field='password') | first }}"
 adguard_hashed_password: "{{ _adguard_raw_password | password_hash('bcrypt') }}"
+
+homelab_domain: "{{ lookup(vault_plugin, 'HomeLab', field='domain') | first  }}"
+cloudflare_token: "{{ lookup(vault_plugin, 'HomeLab', field='cloudflare_token') | first  }}"
+
