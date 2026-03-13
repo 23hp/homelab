@@ -6,7 +6,13 @@
         "*.container.j2": "ini",
         "*.container": "ini",
         "*.volume.j2": "ini",
-        "*.network.j2": "ini"
-        
-    }
+        "*.volume": "ini",
+        "*.network.j2": "ini",
+        "*.network": "ini",
+        "*.quadlets": "ini",
+        "*.yaml.j2": "yaml",
+    },
+    "ansible.python.interpreterPath": "/Users/albert/homelab/.venv/bin/python",
+    "ansible.lightspeed.enabled": false,
+    "ansible.lightspeed.suggestions.enabled": false
 }

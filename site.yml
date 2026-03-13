@@ -1,19 +1,20 @@
-- name: Infrastructure Base Layer (Root)
-  hosts: server_host
-  tags: ['infra']
-  roles:
-    - infra
 - name: Home Server Stack (Rootless Podman)
-  hosts: podman_host
-  tags: ['podman']
-  vars:
-    ansible_env:
-      XDG_RUNTIME_DIR: "/run/user/{{ ansible_effective_user_id }}"
-  roles:
-    - role: podman
-      tags: ['podman']
-    - role: technitium
-      tags: ['dns']
-    - role: traefik
-      tags: ['reverse_proxy']
-    - role: immich
+  hosts: homelab
+  tasks:
+    - name: Setup Podman environment
+      ansible.builtin.include_role:
+        name: setup
+      tags: ['setup']
+
+    - name: Remove all quadlets (use with caution)
+      tags: ['cleanup']
+      containers.podman.podman_quadlet:
+        state: absent
+        all: true
+
+    - name: Deploy Applications
+      tags: ['apps']
+      ansible.builtin.include_role:
+        name: apps
+      vars:
+        apps_name: adguardhome

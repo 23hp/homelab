@@ -1,4 +1,6 @@
 .env
+.log
 secrets/*
 !secrets/*.example
 traefik-stack/certs/*
+.DS_Store

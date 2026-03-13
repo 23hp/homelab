@@ -1,0 +1,5 @@
+vault_plugin: "community.general.bitwarden"
+
+adguard_user: "{{ lookup(vault_plugin, 'AdGuard_Home', field='username') | first  }}"
+_adguard_raw_password: "{{ lookup(vault_plugin, 'AdGuard_Home', field='password') | first }}"
+adguard_hashed_password: "{{ _adguard_raw_password | password_hash('bcrypt') }}"

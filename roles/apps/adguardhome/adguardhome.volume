@@ -1,0 +1,5 @@
+[Unit]
+Description=Storage for AdGuard Home workdir confdir
+
+[Volume]
+Label=service=dns

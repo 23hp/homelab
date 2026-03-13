@@ -1,0 +1,23 @@
+[Unit]
+Description=AdGuard Home
+
+[Container]
+Image=docker.io/adguard/adguardhome:latest
+ContainerName=adguardhome
+
+PublishPort=53:53/udp
+PublishPort=53:53/tcp
+
+Volume=%h/.config/adguardhome:/opt/adguardhome/conf:z
+Volume=adguardhome.volume:/opt/adguardhome/work
+
+Annotation=io.containers.autoupdate=registry
+
+Label=service=dns
+
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

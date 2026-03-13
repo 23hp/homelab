@@ -1,0 +1,20 @@
+# roles/setup/tasks/main.yml
+- name: Disable network checking for faster container startup
+  ansible.builtin.systemd:
+    name: podman-user-wait-network-online.service
+    masked: true
+    scope: user
+
+- name: Make Podman container Auto-Update possible
+  ansible.builtin.systemd:
+    name: podman-auto-update.timer
+    state: started
+    enabled: true
+    scope: user
+
+- name: Enable Traefik discover others containers via Podman socket
+  ansible.builtin.systemd:
+    name: podman.socket
+    state: started
+    enabled: true
+    scope: user
