@@ -1,8 +1,12 @@
 [Unit]
 Description=Traefik Reverse Proxy
 
+After=traefik-network.service
+
 [Container]
 User=0
+SecurityLabelType=unconfined_t
+
 Image=docker.io/traefik:latest
 ContainerName=traefik
 
@@ -11,7 +15,7 @@ PublishPort=443:443
 PublishPort=443:443/udp
 
 Network=proxy_net
-Volume=traefik-certs.volume:/etc/traefik/acme
+Volume=traefik-certs.volume:/letsencrypt
 Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
 Volume=%h/.config/traefik/static-config.yml:/etc/traefik/traefik.yml:ro,Z
 Volume=%h/.config/traefik/dynamic:/etc/traefik/dynamic:ro,Z
