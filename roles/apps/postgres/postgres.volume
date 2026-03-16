@@ -1,0 +1,5 @@
+[Unit]
+Description=PostgreSQL Database Volume
+
+[Volume]
+Label=service=postgres

@@ -1,0 +1,23 @@
+[Unit]
+Description=PostgreSQL
+
+[Container]
+Image=docker.io/library/postgres:16-alpine
+ContainerName=postgres
+
+Network=none
+
+Environment=POSTGRES_USER=admin
+Environment=POSTGRES_PASSWORD=your_secure_password
+Environment=POSTGRES_DB=myapp_db
+
+Volume=%t/postgres:/var/run/postgresql:rw,z
+Volume=postgres.volume:/var/lib/postgresql/data
+
+[Service]
+# create socket folder
+RuntimeDirectory=postgres
+RuntimeDirectoryMode=0777
+
+[Install]
+WantedBy=default.target
