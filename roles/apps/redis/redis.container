@@ -1,0 +1,19 @@
+[Unit]
+Description=Redis
+
+[Container]
+Image=docker.io/library/redis:7-alpine
+ContainerName=redis
+
+Network=none
+
+Volume=%t/redis:/run/redis:rw,z
+Volume=%h/.config/containers/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro,Z
+Exec=redis-server /usr/local/etc/redis/redis.conf
+
+[Service]
+RuntimeDirectory=redis
+RuntimeDirectoryMode=0777
+
+[Install]
+WantedBy=default.target

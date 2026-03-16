@@ -1,0 +1,16 @@
+---
+- name: "Copy Quadlet files"
+  ansible.builtin.copy:
+    src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/systemd/"
+    mode: '600'
+  notify: "Restart app"
+  loop:
+    - "{{ apps_name }}.container"
+
+- name: "Copy config files"
+  ansible.builtin.copy:
+    src: "{{ role_path }}/{{ apps_name }}/redis.conf"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/{{ apps_name }}/"
+    mode: '0644'
+  notify: "Restart app"
