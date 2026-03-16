@@ -6,12 +6,9 @@
 
 - name: "Ensure config and quadlet directories exist - {{ apps_name }}"
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ ansible_facts['user_dir'] }}/.config/{{ apps_name }}"
     state: directory
     mode: '0700'
-  loop:
-    - "{{ ansible_facts['user_dir'] }}/.config/{{ apps_name }}"
-    - "{{ ansible_facts['user_dir'] }}/.config/containers/systemd"
 
 - name: "Load custom deployment task - {{ apps_name }}"
   ansible.builtin.include_tasks: "{{ apps_name }}.yml"
