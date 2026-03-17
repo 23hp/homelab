@@ -3,14 +3,14 @@
   ansible.builtin.copy:
     src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
     dest: "{{ ansible_facts['user_dir'] }}/.config/containers/systemd/"
-    mode: '600'
-  notify: "Restart app"
+    mode: '0644'
   loop:
     - "{{ apps_name }}.container"
+  notify: "Restart app"
 
 - name: "Copy config files"
   ansible.builtin.copy:
     src: "{{ role_path }}/{{ apps_name }}/redis.conf"
-    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/{{ apps_name }}/"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/{{ apps_name }}/"
     mode: '0644'
   notify: "Restart app"

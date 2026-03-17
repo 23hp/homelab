@@ -4,17 +4,19 @@ Description=Redis
 [Container]
 Image=docker.io/library/redis:7-alpine
 ContainerName=redis
+UserNS=keep-id
 
 Network=none
 
-Volume=%t/redis:/run/redis:rw,z
-Volume=%h/.config/containers/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro,Z
+Volume=/tmp:/data:rw
+Volume=%t/redis:/run/redis:rw,U,z
+Volume=%h/.config/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro,U,Z
 Exec=redis-server /usr/local/etc/redis/redis.conf
 
 [Service]
 # create socket folder
 RuntimeDirectory=redis
-RuntimeDirectoryMode=0777
+RuntimeDirectoryMode=0700
 
 [Install]
 WantedBy=default.target
