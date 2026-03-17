@@ -1,6 +1,8 @@
+# roles/apps/handlers/main.yml
+---
 - name: "Restart app"
   ansible.builtin.systemd:
-    name: "{{ apps_name }}.service"
+    name: "{{ apps_app_to_restart }}.service"
     scope: user
     daemon_reload: true
     state: restarted

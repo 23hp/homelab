@@ -4,43 +4,20 @@
     # set var global visible including rescue
     apps_last_attempted_app: "{{ apps_name }}"
 
-- name: "Ensure config and quadlet directories exist - {{ apps_name }}"
+- name: "Ensure config and quadlet directories exist"
   ansible.builtin.file:
     path: "{{ ansible_facts['user_dir'] }}/.config/{{ apps_name }}"
     state: directory
     mode: '0700'
 
-- name: "Load custom deployment task - {{ apps_name }}"
+- name: "Load custom deployment task"
   ansible.builtin.include_tasks: "{{ apps_name }}.yml"
 
-- name: "Apply changes immediately - {{ apps_name }}"
+- name: "Apply changes immediately"
   ansible.builtin.meta: flush_handlers
 
-- name: "Ensure running: {{ apps_name }}"
+- name: "Ensure running"
   ansible.builtin.systemd:
     name: "{{ apps_name }}.service"
     scope: user
     state: started
-
-
-# - name: Deploy Restic Backup Service (Quadlet)
-#   containers.podman.podman_quadlet:
-#     state: started
-#     name: technitium-backup
-#     container_template:
-#       Image: docker.io/restic/restic:latest
-#       Volume: "technitium_config.volume:/data:ro"
-#       EnvironmentFile: "/etc/restic/technitium.env"
-#       Exec: "backup /data"
-
-#     timer_template:
-#       OnCalendar: "daily"
-#       Persistent: "yes"
-
-# - name: Create Restic Environment File
-#   ansible.builtin.copy:
-#     dest: "/etc/restic/technitium.env"
-#     mode: '0600'
-#     content: |
-#       RESTIC_REPOSITORY=/mnt/backup/repo
-#       RESTIC_PASSWORD={{ vault_restic_password }}
