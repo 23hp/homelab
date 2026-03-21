@@ -109,11 +109,11 @@ filters:
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
     name: AdGuard DNS filter
     id: 1
-  - enabled: false
+  - enabled: true
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
     name: AdAway Default Blocklist
     id: 2
-  - enabled: false
+  - enabled: true
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_59.txt
     name: AdGuard DNS Popup Hosts filter
     id: 1773314055
@@ -121,6 +121,10 @@ filters:
     url: https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt
     name: https://github.com/hagezi/dns-blocklists?tab=readme-ov-file#ledger-multi-pro---extended-protection-recommended-
     id: 1773316573
+  - enabled: true
+    url: https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_6_German/filter.txt
+    name: Germany
+    id: 1774109573
 whitelist_filters: []
 user_rules: []
 dhcp:
@@ -160,7 +164,13 @@ filtering:
   blocking_mode: default
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
-  rewrites: []
+  rewrites:
+    - domain: "*.{{ homelab_domain }}"
+      answer: "{{ homelab_ip }}"
+      enabled: true
+    - domain: "{{ homelab_domain }}"
+      answer: "{{ homelab_ip }}"
+      enabled: true
   safe_fs_patterns:
     - /jffs/bin/userfilters/*
   safebrowsing_cache_size: 1048576

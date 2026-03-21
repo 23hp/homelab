@@ -8,13 +8,15 @@ ContainerName=adguardhome
 PublishPort=53:53/udp
 PublishPort=53:53/tcp
 
-# after proxy_net became internel, add extra network to make it work
-Network=proxy_net
-
-Volume=%h/.config/adguardhome:/opt/adguardhome/conf:z
+Volume=%h/.config/adguardhome:/opt/adguardhome/conf:U,z
 Volume=adguardhome.volume:/opt/adguardhome/work
 
 Annotation=io.containers.autoupdate=registry
+
+Network=traefik-public.network
+Label=traefik.enable=true
+Label=traefik.http.routers.adguardhome.rule=Host(`dns.{{ homelab_domain }}`)
+Label=traefik.http.services.adguardhome.loadbalancer.server.port=20000
 
 Label=service=dns
 
@@ -24,3 +26,5 @@ RestartSec=5s
 
 [Install]
 WantedBy=default.target
+
+

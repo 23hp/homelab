@@ -1,11 +1,18 @@
 ---
 - name: "Deploy configuration files (Template-based) - {{ apps_name }}"
   ansible.builtin.template:
-    src: "{{ role_path }}/{{ apps_name }}/AdGuardHome.yaml.j2"
+    src: "{{ role_path }}/{{ apps_name }}/config.yaml.j2"
     dest: "{{ ansible_facts['user_dir'] }}/.config/{{ apps_name }}/AdGuardHome.yaml"
     mode: '0600'
   notify: "Restart app"
   no_log: true
+
+- name: "Copy Quadlet files - {{ apps_name }}"
+  ansible.builtin.template:
+    src: "{{ role_path }}/{{ apps_name }}/{{ apps_name }}.container.j2"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/systemd/{{ apps_name }}.container"
+    mode: '600'
+  notify: "Restart app"
 
 - name: "Copy Quadlet files - {{ apps_name }}"
   ansible.builtin.copy:
@@ -14,5 +21,4 @@
     mode: '600'
   notify: "Restart app"
   loop:
-    - "{{ apps_name }}.container"
     - "{{ apps_name }}.volume"
