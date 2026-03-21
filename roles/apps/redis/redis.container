@@ -8,8 +8,8 @@ UserNS=keep-id
 
 Network=none
 
-Volume=/tmp:/data:rw
-Volume=%t/redis:/run/redis:rw,U,z
+Volume=/tmp:/data
+Volume=%t/redis:/run/redis:U,z
 Volume=%h/.config/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro,U,Z
 Exec=redis-server /usr/local/etc/redis/redis.conf
 
@@ -17,6 +17,9 @@ Exec=redis-server /usr/local/etc/redis/redis.conf
 # create socket folder
 RuntimeDirectory=redis
 RuntimeDirectoryMode=0700
+
+Restart=always
+RestartSec=5s
 
 [Install]
 WantedBy=default.target

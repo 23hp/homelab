@@ -1,3 +1,4 @@
+# postgres.container
 [Unit]
 Description=PostgreSQL
 
@@ -12,13 +13,16 @@ Environment=POSTGRES_USER=admin
 Environment=POSTGRES_PASSWORD=your_secure_password
 Environment=POSTGRES_DB=myapp_db
 
-Volume=%t/postgres:/var/run/postgresql:rw,U,z
+Volume=%t/postgres:/var/run/postgresql:U,z
 Volume=postgres.volume:/var/lib/postgresql/data:U,z
 
 [Service]
 # create socket folder
 RuntimeDirectory=postgres
 RuntimeDirectoryMode=0700
+
+Restart=always
+RestartSec=5s
 
 [Install]
 WantedBy=default.target

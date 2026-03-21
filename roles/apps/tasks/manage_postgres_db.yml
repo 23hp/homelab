@@ -1,0 +1,32 @@
+---
+# Input vars: 
+#   db_name, db_user, db_password, db_extensions (list)
+
+- name: "[{{ db_name }}] Sync Role and Password"
+  ansible.builtin.shell: |
+    podman exec -i postgres psql -U admin -d postgres -c "DO \$$ 
+    BEGIN
+      IF EXISTS (SELECT FROM pg_catalog.pg_user WHERE usename = '{{ db_user }}') THEN
+        EXECUTE format('ALTER ROLE %I WITH PASSWORD %L', '{{ db_user }}', '{{ db_password }}');
+      ELSE
+        EXECUTE format('CREATE ROLE %I WITH LOGIN PASSWORD %L', '{{ db_user }}', '{{ db_password }}');
+      END IF;
+    END \$$;"
+  no_log: true
+
+- name: "[{{ db_name }}] Ensure DB and Owner"
+  ansible.builtin.shell: |
+    podman exec -i postgres psql -U admin -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '{{ db_name }}'" | grep -q 1 || \
+    podman exec -i postgres psql -U admin -d postgres -c "CREATE DATABASE {{ db_name }}";
+    podman exec -i postgres psql -U admin -d postgres -c "ALTER DATABASE {{ db_name }} OWNER TO {{ db_user }}";
+
+- name: "[{{ db_name }}] Install Extensions"
+  ansible.builtin.shell: |
+    podman exec -i postgres psql -U admin -d {{ db_name }} -c "CREATE EXTENSION IF NOT EXISTS \"{{ item }}\" CASCADE;"
+  loop: "{{ db_extensions }}"
+  register: ext_res
+  changed_when: "'CREATE EXTENSION' in ext_res.stdout"
+
+- name: "[{{ db_name }}] Grant Schema Public"
+  ansible.builtin.shell: |
+    podman exec -i postgres psql -U admin -d {{ db_name }} -c "GRANT ALL ON SCHEMA public TO {{ db_user }};"
