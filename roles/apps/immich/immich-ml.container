@@ -1,0 +1,20 @@
+# immich-ml.container
+[Unit]
+Description=Immich Machine Learning
+
+[Container]
+Pod=immich.pod
+# image tuned for iGPU
+Image=ghcr.io/immich-app/immich-machine-learning:release-openvino
+
+Volume=immich-ml.volume:/cache:z
+
+GroupAdd=1
+AddDevice=/dev/dri/renderD128:/dev/dri/renderD128:rw
+
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

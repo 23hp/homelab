@@ -1,0 +1,32 @@
+---
+- name: Set restart flag
+  ansible.builtin.set_fact:
+    apps_last_attempted_app: "{{ apps_name }}-pod"
+
+- name: Copy Quadlet files
+  ansible.builtin.copy:
+    src: "{{ role_path }}/{{ apps_name }}/{{ item }}"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/systemd/"
+    mode: "600"
+  notify: "Restart app"
+  loop:
+    - "{{ apps_name }}.pod"
+    - "{{ apps_name }}-ml.volume"
+    - "{{ apps_name }}-ml.container"
+    - "{{ apps_name }}-server.volume"
+
+- name: Copy Quadlet files with secret
+  ansible.builtin.template:
+    src: "{{ role_path }}/{{ apps_name }}/immich-server.container.j2"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/containers/systemd/immich-server.container"
+    mode: '0600'
+  notify: "Restart app"
+  no_log: true
+
+- name: Setup Immich DB
+  ansible.builtin.include_tasks: "manage_postgres_db.yml"
+  vars:
+    db_name: "{{ databases.immich.db_name }}"
+    db_user: "{{ databases.immich.db_user }}"
+    db_password: "{{ databases.immich.db_password }}"
+    db_extensions: "{{ databases.immich.db_extensions }}"

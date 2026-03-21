@@ -1,0 +1,32 @@
+# immich-server.container
+[Unit]
+Description=Immich Server
+
+[Container]
+Pod=immich.pod
+Image=ghcr.io/immich-app/immich-server:release
+
+Environment=IMMICH_MACHINE_LEARNING_URL=http://localhost:3003
+Environment=TZ=Europe/Berlin
+Environment=DB_URL=postgresql://{{databases.immich.db_user}}:{{databases.immich.db_password}}@localhost/{{databases.immich.db_name}}?host=/run/postgres
+Environment=REDIS_SOCKET=/run/redis/redis.sock
+
+Volume=immich-server.volume:/data:U,z
+Volume=%t/postgres:/run/postgres:ro,z
+Volume=%t/redis:/run/redis:ro,z
+
+GroupAdd=1
+AddDevice=/dev/dri/renderD128:/dev/dri/renderD128:rw
+
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+
+
+
+
+
+
