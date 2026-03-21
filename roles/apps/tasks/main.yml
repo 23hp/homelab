@@ -18,6 +18,6 @@
 
 - name: "Ensure running"
   ansible.builtin.systemd:
-    name: "{{ apps_name }}.service"
+    name: "{{ apps_last_attempted_app }}.service"
     scope: user
     state: started

@@ -2,7 +2,7 @@
 ---
 - name: "Restart app"
   ansible.builtin.systemd:
-    name: "{{ apps_app_to_restart }}.service"
+    name: "{{ apps_last_attempted_app }}.service"
     scope: user
     daemon_reload: true
     state: restarted

@@ -10,4 +10,5 @@ if [ -z "$BW_SESSION" ]; then
 fi
 
 ansible-playbook site.yml
+
 bw lock
