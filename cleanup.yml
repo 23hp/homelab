@@ -18,3 +18,4 @@
     - name: Remove all unused podman volumes
       containers.podman.podman_prune:
         volume: true
+        network: true

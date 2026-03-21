@@ -1,9 +1,34 @@
-vault_plugin: "community.general.bitwarden"
+podman_user: "podman"
+podman_storage_path: "/var/lib/podman-storage"
 
-adguard_user: "{{ lookup(vault_plugin, 'AdGuard_Home', field='username') | first  }}"
-_adguard_raw_password: "{{ lookup(vault_plugin, 'AdGuard_Home', field='password') | first }}"
-adguard_hashed_password: "{{ _adguard_raw_password | password_hash('bcrypt') }}"
+vault: "community.general.bitwarden"
 
-homelab_domain: "{{ lookup(vault_plugin, 'HomeLab', field='domain') | first  }}"
-cloudflare_token: "{{ lookup(vault_plugin, 'HomeLab', field='cloudflare_token') | first  }}"
+adguard_user: "{{ lookup(vault, 'AdGuard_Home', field='username') | first  }}"
+adguard_hashed_password: "{{ lookup(vault, 'AdGuard_Home', field='password_hash') | first }}"
 
+homelab_domain: "{{ lookup(vault, 'HomeLab', field='domain') | first  }}"
+homelab_ip: "{{ lookup(vault, 'HomeLab', field='ip') | first  }}"
+router_ip: "{{ lookup(vault, 'HomeLab', field='router_ip') | first  }}"
+wifi_ip: "{{ lookup(vault, 'HomeLab', field='wifi_ip') | first  }}"
+
+cloudflare_token: "{{ lookup(vault, 'HomeLab', field='cloudflare_token') | first  }}"
+
+databases:
+  immich:
+    db_name: immich
+    db_user: immich
+    db_password: "{{ lookup(vault, 'HomeLab', field='immich_db_password') | first  }}"
+    db_extensions:
+      - "vector"
+      - "vchord"
+      - "earthdistance"
+      - "cube"
+      - "uuid-ossp"
+      - "pg_trgm"
+  # another_app:
+  #   db_name: "app_db"
+  #   db_user: "app_user"
+  #   db_password: "app_password"
+  #   db_extensions:
+  #     - "pg_trgm"
+  #     - "unaccent"

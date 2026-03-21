@@ -12,12 +12,11 @@
   hosts: homelab
   vars:
     my_apps:
-      # - traefik
-      # - adguardhome
+      - traefik
+      - adguardhome
       - postgres
       - redis
       - immich
-      # - null
   tasks:
     - name: Deploy Applications Cluster
       # tags: [never]
