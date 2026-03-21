@@ -15,5 +15,11 @@
     },
     "ansible.python.interpreterPath": "/Users/albert/homelab/.venv/bin/python",
     "ansible.lightspeed.enabled": false,
-    "ansible.lightspeed.suggestions.enabled": false
+    "ansible.lightspeed.suggestions.enabled": false,
+    "keyboard.touchbar.ignored": [
+        "workbench.action.debug.run",
+        "workbench.action.debug.start",
+        "workbench.action.navigateBack",
+        "workbench.action.navigateForward",
+    ]
 }
