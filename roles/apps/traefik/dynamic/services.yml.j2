@@ -4,13 +4,21 @@ http:
       rule: "Host(`traefik.{{ homelab_domain }}`)"
       entryPoints: ["websecure"]
       service: api@internal
-    adguardhome-router:
-      rule: 'Host(`dns.{{ homelab_domain }}`)'
+    router:
+      rule: 'Host(`router.{{ homelab_domain }}`)'
       entryPoints: ["websecure"]
-      service: "adguardhome-svc"
+      service: "router-svc"
+    wifi:
+      rule: 'Host(`wifi.{{ homelab_domain }}`)'
+      entryPoints: ["websecure"]
+      service: "wifi-svc"
     
   services:
-    adguardhome-svc:
+    router-svc:
       loadBalancer:
         servers:
-          - url: "http://adguardhome:20000"
+          - url: "http://{{ router_ip }}"
+    wifi-svc:
+      loadBalancer:
+        servers:
+          - url: "http://{{ wifi_ip }}"

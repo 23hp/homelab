@@ -14,11 +14,12 @@ PublishPort=80:80
 PublishPort=443:443
 PublishPort=443:443/udp
 
-Network=proxy_net
+Network=traefik-public.network
+Network=traefik-internal.network
 Volume=traefik-certs.volume:/letsencrypt
-Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
-Volume=%h/.config/traefik/static-config.yml:/etc/traefik/traefik.yml:ro,Z
-Volume=%h/.config/traefik/dynamic:/etc/traefik/dynamic:ro,Z
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,U,z
+Volume=%h/.config/traefik/static-config.yml:/etc/traefik/traefik.yml:ro,U,Z
+Volume=%h/.config/traefik/dynamic:/etc/traefik/dynamic:ro,U,Z
 
 #TODO move tls logic out
 Environment=CF_DNS_API_TOKEN={{ cloudflare_token }}

@@ -1,9 +1,0 @@
-[Network]
-NetworkName=proxy_net
-
-Label=service=reverse-proxy
-
-#TODO: Move tls application logic out, and make this network internal
-
-[Install]
-WantedBy=default.target

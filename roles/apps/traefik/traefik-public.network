@@ -1,0 +1,3 @@
+# traefik-public.network
+[Network]
+Label=service=reverse-proxy

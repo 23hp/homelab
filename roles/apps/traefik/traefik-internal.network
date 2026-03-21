@@ -1,0 +1,4 @@
+# traefik-internal.network
+[Network]
+Internal=true
+Label=service=reverse-proxy

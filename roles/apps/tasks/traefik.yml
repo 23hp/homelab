@@ -6,7 +6,8 @@
     mode: '600'
   notify: "Restart app"
   loop:
-    - "{{ apps_name }}.network"
+    - "{{ apps_name }}-public.network"
+    - "{{ apps_name }}-internal.network"
     - "{{ apps_name }}-certs.volume"
 
 - name: "Copy Quadlet .container file"
@@ -38,4 +39,3 @@
   loop:
     - "global"
     - "services"
-
