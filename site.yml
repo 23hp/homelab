@@ -1,27 +1,63 @@
-- name: Home Server Stack (Rootless Podman)
+# site.yml
+- name: "Setup env for root"
+  hosts: homelab_root
+  tags: [setup, never]
+  roles: [rootSetup]
+- name: "Setup user podman"
+  hosts: homelab
+  tags: [setup, never]
+  roles: [podmanSetup]
+
+- name: Deploy Apps
   hosts: homelab
   vars:
     my_apps:
-      - traefik
-      - adguardhome
+      # - traefik
+      # - adguardhome
+      - postgres
+      - redis
+      - immich
+      # - null
   tasks:
-    - name: Setup Podman environment
-      ansible.builtin.include_role:
-        name: setup
-      tags: ['setup']
+    - name: Deploy Applications Cluster
+      # tags: [never]
+      block:
+        - name: Deploy Apps in Loop
+          ansible.builtin.include_role:
+            name: apps
+          vars:
+            apps_name: "{{ app_to_deploy }}"
+          loop: "{{ my_apps }}"
+          loop_control:
+            loop_var: app_to_deploy
 
-    - name: Remove all quadlets (use with caution)
-      tags: ['cleanup']
-      containers.podman.podman_quadlet:
-        state: absent
-        all: true
+      rescue:
+        - name: "Diagnostic: Check Failure Cause"
+          ansible.builtin.command: "journalctl --user -n 20 --no-pager -u {{ apps_last_attempted_app }}.service"
+          register: debug_logs
+          delegate_to: "{{ inventory_hostname }}"
+          changed_when: false
 
-    - name: Deploy Applications
-      tags: ['apps']
-      ansible.builtin.include_role:
-        name: apps
-      vars:
-        apps_name: "{{ app_to_deploy }}"
-      loop: "{{ my_apps }}"
-      loop_control:
-        loop_var: app_to_deploy
+        - name: Print Debug Summary
+          ansible.builtin.debug:
+            msg:
+              - "🚨 Deployment failed at app: {{ apps_last_attempted_app }}"
+              - "📋 Recent Logs:"
+              - "{{ debug_logs.stdout_lines }}"
+
+    # target_disk: "/dev/sda"
+
+    # - name: Use Podman to send SCSI STOP command
+    #   tags: ['usb_disk']
+    #   # 运行一个带 sg3_utils 的镜像，执行完即销毁
+    #   containers.podman.podman_container:
+    #     name: disk_phys_stop
+    #     image: registry.opensuse.org/opensuse/toolbox:latest
+    #     state: started
+    #     privileged: true
+    #     # 挂载宿主机设备
+    #     volumes:
+    #       - "/dev:/dev"
+    #     command: "sg_start --stop {{ target_disk }}"
+    #     # 执行完毕后自动删除容器
+    #     rm: true

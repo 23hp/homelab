@@ -1,0 +1,20 @@
+# cleanup.yml
+- name: "CleanUp Apps"
+  hosts: homelab
+  tasks:
+    - name: Cleanup existing quadlets
+      containers.podman.podman_quadlet:
+        state: absent
+        all: true
+        # name:
+        #   - postgres.container
+        #   - postgres.volume
+        #   - redis.container
+        #   - immich-ml.container
+        #   - immich-ml.volume
+        #   - immich-server.container
+        #   - immich-server.volume
+        #   - immich.pod
+    - name: Remove all unused podman volumes
+      containers.podman.podman_prune:
+        volume: true
