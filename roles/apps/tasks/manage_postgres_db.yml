@@ -1,10 +1,10 @@
 ---
-# Input vars: 
+# Input vars:
 #   db_name, db_user, db_password, db_extensions (list)
 
-- name: "[{{ db_name }}] Sync Role and Password"
+- name: "Sync Role and Password - [{{ db_name }}]"
   ansible.builtin.shell: |
-    podman exec -i postgres psql -U admin -d postgres -c "DO \$$ 
+    podman exec -i postgres psql -U admin -d postgres -c "DO \$$
     BEGIN
       IF EXISTS (SELECT FROM pg_catalog.pg_user WHERE usename = '{{ db_user }}') THEN
         EXECUTE format('ALTER ROLE %I WITH PASSWORD %L', '{{ db_user }}', '{{ db_password }}');
