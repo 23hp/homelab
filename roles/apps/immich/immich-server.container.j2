@@ -18,6 +18,11 @@ Volume=%t/redis:/run/redis:ro,z
 GroupAdd=1
 AddDevice=/dev/dri/renderD128:/dev/dri/renderD128:rw
 
+Network=traefik-public.network
+Label=traefik.enable=true
+Label=traefik.http.routers.immich.rule=Host(`immich.{{ homelab_domain }}`)
+Label=traefik.http.services.immich.loadbalancer.server.port=2283
+
 [Service]
 Restart=always
 RestartSec=5s
