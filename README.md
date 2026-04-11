@@ -9,7 +9,7 @@ A production-grade, declarative infrastructure designed to self-heal and resist 
 * **Orchestration:** ArgoCD (App-of-Apps pattern, automated drift correction)
 * **Focus:** Privacy, Security, and AI-driven threat resilience.
 
-## Prerequsite
+## Prerequisite
 - ansible
 - talosctl
 - kubectl
