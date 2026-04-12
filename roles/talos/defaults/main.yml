@@ -11,11 +11,8 @@ talos_patches:
 
 talos_device_arch: "amd64"
 talos_install_disk: "/dev/nvme0n1"
-talos_install_method: "iso" # options: ipxe, iso
 talos_cluster_name: "homelab"
 talos_node_ip: "192.168.20.2"
-# For iPXE installation
-talos_config_url: "http://192.168.20.1/controlplane.yaml"
 
 # Generated values
 talos_version: v1.12.6

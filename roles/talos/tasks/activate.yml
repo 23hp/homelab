@@ -1,0 +1,27 @@
+---
+- name: Generate Talos Config
+  ansible.builtin.include_tasks: gen_config.yml
+
+- name: Apply Talos config to controlplane node
+  ansible.builtin.command: |
+    talosctl apply-config \
+    --insecure \
+    --file controlplane.yaml \
+    --nodes {{ talos_node_ip }}
+  args:
+    chdir: "{{ role_path }}/.talosctl"
+
+- name: Copy talosconfig to ~/.talos/config
+  ansible.builtin.copy:
+    src: "{{ role_path }}/.talosctl/talosconfig"
+    dest: "~/.talos/config"
+    mode: '0600'
+
+- name: Bootstrap Talos cluster
+  ansible.builtin.command: "{{ command }}"
+  loop_control:
+    loop_var: command
+  loop:
+    - talosctl bootstrap
+    - talosctl health --wait-timeout 10m
+    - talosctl kubeconfig

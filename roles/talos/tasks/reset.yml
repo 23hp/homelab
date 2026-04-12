@@ -1,9 +1,17 @@
 ---
 - name: Reset Talos Linux
-  ansible.builtin.command: >
-    talosctl reset
-    --graceful=false
+  ansible.builtin.command: |
+    talosctl reset \
+    --graceful=false \
+    --wipe-mode system-disk \
+    --system-labels-to-wipe STATE \
+    --system-labels-to-wipe EPHEMERAL
     --reboot
-    --system-labels-to-keep STATE
-    --system-labels-to-keep EPHEMERAL
-    --wipe-additional-disks=false
+
+- name: Verify Talos node is reset
+  ansible.builtin.command: talosctl get machinestatus --insecure -n {{ talos_node_ip }}
+  register: machinestatus
+
+- name: Display machinestatus
+  ansible.builtin.debug:
+    var: machinestatus.stdout
