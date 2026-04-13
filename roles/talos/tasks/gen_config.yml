@@ -5,9 +5,13 @@
 - name: Get Kubernetes version
   ansible.builtin.include_tasks: get_k8s_version.yml
 
+- name: Set Talos config path
+  ansible.builtin.set_fact:
+    talos_config_path: "{{ role_path }}/.talos_config"
+
 - name: Ensure talos config directory exists
   ansible.builtin.file:
-    path: "{{ role_path }}/.talosctl"
+    path: "{{ talos_config_path }}"
     state: directory
     mode: '0700'
 
@@ -15,7 +19,7 @@
   ansible.builtin.command: talosctl gen secrets --talos-version {{ talos_version }}
   args:
     creates: secrets.yaml
-    chdir: "{{ role_path }}/.talosctl"
+    chdir: "{{ talos_config_path }}"
 
 - name: Generate Talos config
   ansible.builtin.command: >
@@ -28,16 +32,17 @@
     --with-secrets secrets.yaml
     --force
   args:
-    chdir: "{{ role_path }}/.talosctl"
+    chdir: "{{ talos_config_path }}"
 
 - name: Remove all comment lines from the YAML file
   ansible.builtin.replace:
-    path: "{{ role_path }}/.talosctl/controlplane.yaml"
+    path: "{{ talos_config_path }}/controlplane.yaml"
     regexp: '^\s*#.*$'
     replace: ''
+
 - name: Remove empty lines
   ansible.builtin.replace:
-    path: "{{ role_path }}/.talosctl/controlplane.yaml"
+    path: "{{ talos_config_path }}/controlplane.yaml"
     regexp: '\n\s*\n'
     replace: '\n'
 
@@ -45,7 +50,7 @@
   ansible.builtin.command: >
     talosctl --talosconfig=talosconfig config {{ config_key }} {{ talos_node_ip }}
   args:
-    chdir: "{{ role_path }}/.talosctl"
+    chdir: "{{ talos_config_path }}"
   loop_control:
     loop_var: config_key
   loop:

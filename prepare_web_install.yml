@@ -1,0 +1,28 @@
+# ansible/playbooks/prepare_web_install.yml
+---
+- name: Setup PXE server
+  hosts: router
+  gather_facts: false
+  tasks:
+    - name: Include PXE server setup task
+      ansible.builtin.include_role:
+        name: router
+        tasks_from: setup_pxe_server
+    - name: Generate iPXE config
+      ansible.builtin.include_role:
+        name: talos
+        tasks_from: gen_ipxe
+      vars:
+        talos_ipxe_folder: "/www"
+
+- name: Setup HTTP server
+  hosts: http_server
+  gather_facts: false
+  roles: [httpserver]
+  tasks:
+    - name: Download Talos installation files to HTTP server
+      ansible.builtin.include_role:
+        name: talos
+        tasks_from: download_system
+      vars:
+        talos_image_folder: "{{ httpserver_web_root }}"

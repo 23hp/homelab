@@ -1,0 +1,6 @@
+#!ipxe
+
+imgfree
+kernel {{http_server_url}}/{{talos_kernel}} talos.platform=metal console=tty0 init_on_alloc=1 slab_nomerge pti=on consoleblank=0 nvme_core.io_timeout=4294967295 printk.devkmsg=on selinux=1 module.sig_enforce=1
+initrd {{http_server_url}}/{{talos_initrd}}
+boot

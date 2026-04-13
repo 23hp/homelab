@@ -1,6 +1,14 @@
 ---
+# activate.yml - Initialize Talos node installed a via ISO image or manual installation
 - name: Generate Talos Config
   ansible.builtin.include_tasks: gen_config.yml
+
+- name: Wait for maintenance state
+  ansible.builtin.command: "talosctl get machinestatus --insecure -n {{ talos_node_ip }} -o jsonpath='{.spec.stage}'"
+  register: talos_machinestatus
+  until: talos_machinestatus.stdout == "maintenance"
+  retries: 20
+  delay: 5
 
 - name: Apply Talos config to controlplane node
   ansible.builtin.command: |
@@ -9,18 +17,23 @@
     --file controlplane.yaml \
     --nodes {{ talos_node_ip }}
   args:
-    chdir: "{{ role_path }}/.talosctl"
+    chdir: "{{ talos_config_path }}"
 
 - name: Copy talosconfig to ~/.talos/config
   ansible.builtin.copy:
-    src: "{{ role_path }}/.talosctl/talosconfig"
+    src: "{{ talos_config_path }}/talosconfig"
     dest: "~/.talos/config"
     mode: '0600'
 
+- name: Wait for kubelet to be healthy
+  ansible.builtin.shell: "talosctl service kubelet | grep -q 'HEALTH.*OK'"
+  register: kubelet_status
+  until: kubelet_status.rc == 0
+  retries: 20
+  delay: 7
+
 - name: Bootstrap Talos cluster
-  ansible.builtin.command: "{{ command }}"
-  loop_control:
-    loop_var: command
+  ansible.builtin.command: "{{ item }}"
   loop:
     - talosctl bootstrap
     - talosctl health --wait-timeout 10m

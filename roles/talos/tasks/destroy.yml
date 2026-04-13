@@ -1,0 +1,7 @@
+---
+- name: Clean up system disk and reboot
+  ansible.builtin.command: |
+    talosctl reset \
+    --graceful=false \
+    --wipe-mode system-disk \
+    --reboot

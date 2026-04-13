@@ -1,4 +1,3 @@
-# ansible/playbooks/system-operate.yml
 ---
 - name: Setup Talos Linux
   hosts: localhost
@@ -7,8 +6,7 @@
     - talos
   vars:
     talos_tasks:
-      - install.yml
       # - reset.yml
-      # - activate.yml
-      # - gen_config.yml
+      # - destroy.yml
+      - activate.yml
     talos_patches: []

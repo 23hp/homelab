@@ -1,0 +1,23 @@
+---
+- name: Get Talos version
+  ansible.builtin.include_tasks: get_version.yml
+
+- name: Fetch digests for Talos installation files
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/siderolabs/talos/releases/tags/{{ talos_version }}"
+    return_content: true
+  register: talos_release_info
+
+- name: Download vmlinuz and initrd files
+  vars:
+    talos_install_files:
+      - "{{ talos_kernel }}"
+      - "{{ talos_initrd }}"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: "{{ talos_image_folder }}/{{ item.name }}"
+    checksum: "{{ item.digest }}"
+    timeout: 60
+  loop: "{{ talos_release_info.json.assets | selectattr('name', 'in', talos_install_files) | list }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,0 +1,23 @@
+---
+- name: Download iPXE EFI binary for x86_64
+  ansible.builtin.get_url:
+    # url: https://boot.ipxe.org/x86_64-efi-sb/ipxe.efi
+    url: https://boot.ipxe.org/x86_64-efi/ipxe.efi
+    dest: /www/ipxe.efi
+    checksum: sha256:3e7377cf9042aa6489da8b7c2a43c7358deed9b5024a59a1632d4e982474d899
+    mode: '0644'
+
+# - name: Download PXE secure boot EFI binary for x86_64
+#   ansible.builtin.get_url:
+#     url: https://boot.ipxe.org/x86_64-efi-sb/ipxe.efi
+#     dest: /www/ipxe-secure-boot.efi
+#     checksum: sha256:e8772974f8234fc5bb13cc517c0fc2614c3aa36ba5cc12a9912b1acd425b50a2
+#     mode: '0644'
+
+- name: Configure TFTP server for PXE boot
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - uci set dhcp.@dnsmasq[0].enable_tftp='1'
+    - uci set dhcp.@dnsmasq[0].tftp_root='/www'
+    - uci set dhcp.@dnsmasq[0].dhcp_boot='ipxe.efi'
+    - uci commit dhcp

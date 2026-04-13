@@ -13,6 +13,6 @@
     cmd: "talosctl patch machineconfig --patch-file {{ patch_file }}"
   args:
     chdir: "{{ role_path }}/files"
-  loop: "{{ talos_patches | default([]) }}"
   loop_control:
     loop_var: patch_file
+  loop: "{{ talos_patches | default([]) }}"

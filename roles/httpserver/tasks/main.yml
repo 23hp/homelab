@@ -1,0 +1,24 @@
+---
+- name: Ensure web root directory exists
+  ansible.builtin.file:
+    path: "{{ httpserver_web_root }}"
+    state: directory
+    mode: '0755'
+
+- name: Config HTTP server
+  ansible.builtin.blockinfile:
+    path: /jffs/scripts/post-mount
+    marker: "# {mark} Start HTTP server if port is not occupied#"
+    block: >
+      netstat -lnt | grep -q ":54321 " || nohup /opt/bin/python3 -m
+      http.server 54321 --directory {{ httpserver_web_root }} >/dev/null 2>&1 &
+
+- name: Start HTTP server
+  ansible.builtin.command: sh /jffs/scripts/post-mount
+
+- name: Download Talos installation files to HTTP server
+  ansible.builtin.include_role:
+    name: talos
+    tasks_from: download_system
+  vars:
+    talos_image_folder: "{{ httpserver_web_root }}"
