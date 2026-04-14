@@ -1,0 +1,5 @@
+---
+- name: Restart OpenWrt Dnsmasq
+  community.general.openwrt_init:
+    name: dnsmasq
+    state: restarted

@@ -1,4 +1,0 @@
-httpserver_web_root: "/tmp/mnt/sandisk/www"
-
-httpserver_file_src: ""
-httpserver_file_relative_path: ""

@@ -1,28 +1,35 @@
-# ansible/playbooks/prepare_web_install.yml
+# prepare_web_install.yml
 ---
-- name: Setup PXE server
-  hosts: router
+- name: Setup DHCP boot
+  tags: [never]
+  hosts: openwrt
   gather_facts: false
   tasks:
     - name: Include PXE server setup task
       ansible.builtin.include_role:
         name: router
-        tasks_from: setup_pxe_server
-    - name: Generate iPXE config
-      ansible.builtin.include_role:
-        name: talos
-        tasks_from: gen_ipxe
-      vars:
-        talos_ipxe_folder: "/www"
+        tasks_from: setup_dhcp_boot
 
-- name: Setup HTTP server
-  hosts: http_server
+- name: Setup HTTP & TFTP server
+  hosts: asuswrt
   gather_facts: false
-  roles: [httpserver]
   tasks:
-    - name: Download Talos installation files to HTTP server
+    - name: Include server setup tasks
+      ansible.builtin.include_role:
+        name: router
+        tasks_from: "{{ task }}"
+      loop_control:
+        loop_var: task
+      loop:
+        - setup_http_server
+        - setup_pxe_server
+    - name: Generate EFI URL
       ansible.builtin.include_role:
         name: talos
-        tasks_from: download_system
-      vars:
-        talos_image_folder: "{{ httpserver_web_root }}"
+        tasks_from: get_image_urls
+    - name: Download Secure Boot UKI image
+      ansible.builtin.get_url:
+        url: "{{ talos_efi_url }}"
+        dest: "{{ router_web_root }}/boot.efi"
+        mode: '0644'
+        timeout: 60

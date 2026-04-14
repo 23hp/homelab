@@ -1,4 +1,7 @@
 ---
+- name: Get Talos version
+  ansible.builtin.include_tasks: get_version.yml
+
 - name: Submit configuration to Image Factory for Schematic ID
   ansible.builtin.uri:
     url: https://factory.talos.dev/schematics
@@ -13,7 +16,7 @@
   delay: 5
   until: schematic_res.status == 201
 
-- name: Extract the schematic ID
+- name: Set image URLs
   ansible.builtin.set_fact:
-    talos_schematic_id: "{{ schematic_res.json.id }}"
-    cacheable: true
+    talos_efi_url: "https://factory.talos.dev/image/{{ schematic_res.json.id }}/{{ talos_version }}/metal-amd64-secureboot-uki.efi"
+    talos_installer_url: "factory.talos.dev/metal-installer-secureboot/{{ schematic_res.json.id }}:{{ talos_version }}"

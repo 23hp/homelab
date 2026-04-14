@@ -1,6 +1,0 @@
----
-- name: Generate iPXE config
-  ansible.builtin.template:
-    src: autoexec.ipxe.j2
-    dest: "{{ talos_ipxe_folder }}/autoexec.ipxe"
-    mode: '0644'

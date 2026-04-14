@@ -9,6 +9,7 @@
   until: talos_machinestatus.stdout == "maintenance"
   retries: 20
   delay: 5
+  changed_when: false
 
 - name: Apply Talos config to controlplane node
   ansible.builtin.command: |
@@ -29,6 +30,7 @@
   ansible.builtin.shell: "talosctl service kubelet | grep -q 'HEALTH.*OK'"
   register: kubelet_status
   until: kubelet_status.rc == 0
+  changed_when: false
   retries: 20
   delay: 7
 

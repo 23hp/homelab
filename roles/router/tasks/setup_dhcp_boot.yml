@@ -1,0 +1,11 @@
+---
+- name: Configure PXE options on OpenWrt (UCI config)
+  ansible.builtin.lineinfile:
+    path: /etc/config/dhcp
+    regexp: "list dhcp_option '{{ item.split(',')[0] }},"
+    line: "    list dhcp_option '{{ item }}'"
+    insertafter: "config dhcp '{{ router_vlan_name }}'"
+  loop:
+    - "66,{{ http_server_ip }}"
+    - "67,{{ router_boot_file }}"
+  notify: Restart OpenWrt Dnsmasq

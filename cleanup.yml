@@ -1,0 +1,13 @@
+# ansible/playbooks/cleanup.yml
+---
+- name: Clean up HTTP & tftp server
+  hosts: asuswrt
+  gather_facts: false
+  tasks:
+    - name: Remove hosted files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ router_web_root }}"
+        - "{{ router_tftp_root }}"

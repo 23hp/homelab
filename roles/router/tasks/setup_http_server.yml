@@ -1,0 +1,19 @@
+---
+- name: Ensure web root directory exists
+  ansible.builtin.file:
+    path: "{{ router_web_root }}"
+    state: directory
+    mode: '0755'
+
+- name: Check HTTP port
+  shell: "netstat -lutnp | grep ':{{ http_server_port }} '"
+  register: port_result
+  failed_when: false
+  changed_when: false
+
+- name: Start Python3 HTTP server if not running
+  ansible.builtin.shell:
+    nohup python3 -m http.server {{ http_server_port }} > /dev/null 2>&1 &
+  args:
+    chdir: "{{ router_web_root }}"
+  when: port_result.stdout == ""
