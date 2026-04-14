@@ -1,7 +1,6 @@
 # prepare_web_install.yml
 ---
 - name: Setup DHCP boot
-  tags: [never]
   hosts: openwrt
   gather_facts: false
   tasks:
@@ -10,19 +9,14 @@
         name: router
         tasks_from: setup_dhcp_boot
 
-- name: Setup HTTP & TFTP server
+- name: Setup TFTP server
   hosts: asuswrt
   gather_facts: false
   tasks:
     - name: Include server setup tasks
       ansible.builtin.include_role:
         name: router
-        tasks_from: "{{ task }}"
-      loop_control:
-        loop_var: task
-      loop:
-        - setup_http_server
-        - setup_pxe_server
+        tasks_from: setup_pxe_server
     - name: Generate EFI URL
       ansible.builtin.include_role:
         name: talos
@@ -30,6 +24,6 @@
     - name: Download Secure Boot UKI image
       ansible.builtin.get_url:
         url: "{{ talos_efi_url }}"
-        dest: "{{ router_web_root }}/boot.efi"
+        dest: "{{ router_tftp_root }}/{{ boot_file }}"
         mode: '0644'
         timeout: 60

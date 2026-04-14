@@ -1,7 +1,5 @@
-router_vlan_name: "lan"
 router_web_root: "/tmp/www"
 router_tftp_root: "/tmp/tftp"
-router_boot_file: "ipxe.efi"
 
 router_file_src: ""
 router_file_relative_path: ""
