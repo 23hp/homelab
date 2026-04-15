@@ -1,10 +1,28 @@
+---
 # Apply by default
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: STATE
+encryption:
+  provider: luks2
+  keys:
+    - tpm: {}
+      slot: 0
 ---
 apiVersion: v1alpha1
 kind: VolumeConfig
 name: EPHEMERAL
 provisioning:
   maxSize: 200GiB
+encryption:
+  provider: luks2
+  keys:
+    - tpm: {}
+      slot: 0
+      lockToState: true
+  options:
+    - no_read_workqueue
+    - no_write_workqueue
 ---
 apiVersion: v1alpha1
 kind: UserVolumeConfig
@@ -14,6 +32,17 @@ provisioning:
   diskSelector:
     match: disk.dev_path == '/dev/nvme0n1'
   minSize: 1000GiB
+encryption:
+  provider: luks2
+  keys:
+    - tpm: {}
+      slot: 0
+    - slot: 1
+      static:
+        passphrase: {{ talos_disk_password }}
+  options:
+    - no_read_workqueue
+    - no_write_workqueue
 ---
 # Enable workers on your control plane nodes
 cluster:

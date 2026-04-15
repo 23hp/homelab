@@ -28,8 +28,8 @@
 
 - name: Wait for kubelet to be healthy
   ansible.builtin.shell: "talosctl service kubelet | grep -q 'HEALTH.*OK'"
-  register: kubelet_status
-  until: kubelet_status.rc == 0
+  register: talos_kubelet_status
+  until: talos_kubelet_status.rc == 0
   changed_when: false
   retries: 20
   delay: 7
@@ -40,3 +40,4 @@
     - talosctl bootstrap
     - talosctl health --wait-timeout 10m
     - talosctl kubeconfig
+    - talosctl reboot

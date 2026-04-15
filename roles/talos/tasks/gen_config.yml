@@ -15,6 +15,12 @@
     state: directory
     mode: '0700'
 
+- name: Generate default patch
+  ansible.builtin.template:
+    src: "default_patch.yaml.j2"
+    dest: "{{ talos_config_path }}/default_patch.yaml"
+    mode: "0600"
+
 - name: Generate Talos secrets
   ansible.builtin.command: talosctl gen secrets --talos-version {{ talos_version }}
   args:
@@ -24,7 +30,7 @@
 - name: Generate Talos config
   ansible.builtin.command: >
     talosctl gen config {{ talos_cluster_name }} https://{{ talos_node_ip }}:6443
-    --config-patch-control-plane  @{{ role_path }}/files/default_patch.yaml
+    --config-patch-control-plane  @default_patch.yaml
     --install-disk {{ talos_install_disk }}
     --install-image {{ talos_installer_url }}
     --kubernetes-version {{ talos_k8s_version }}
