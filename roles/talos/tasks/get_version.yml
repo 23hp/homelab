@@ -5,12 +5,12 @@
     method: GET
     status_code: 200
     return_content: true
-  register: versions_response
+  register: talos_versions_response
   retries: 3
   delay: 5
-  until: versions_response.status == 200
+  until: talos_versions_response.status == 200
 
 - name: Extract the latest stable version
   ansible.builtin.set_fact:
-    talos_version: "{{ versions_response.content | from_json | reject('search', 'alpha|beta') | list | last }}"
+    talos_version: "{{ talos_versions_response.content | from_json | reject('search', 'alpha|beta') | list | last }}"
     cacheable: true
