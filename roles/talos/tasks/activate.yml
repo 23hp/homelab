@@ -32,7 +32,7 @@
   until: talos_kubelet_status.rc == 0
   changed_when: false
   retries: 20
-  delay: 7
+  delay: 15
 
 - name: Bootstrap Talos cluster
   ansible.builtin.command: "{{ item }}"
