@@ -1,2 +1,1 @@
-router_web_root: "/tmp/mnt/sandisk/www"
 router_tftp_root: "/tmp/mnt/sandisk/tftp"
