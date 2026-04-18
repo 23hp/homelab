@@ -1,4 +1,5 @@
-# prepare_web_install.yml
+# pxe-setup.yml
+# sets up the DHCP and TFTP servers for PXE booting Talos Linux
 ---
 - name: Setup DHCP boot
   hosts: openwrt
@@ -24,6 +25,6 @@
     - name: Download Secure Boot UKI image
       ansible.builtin.get_url:
         url: "{{ talos_efi_url }}"
-        dest: "{{ router_tftp_root }}/{{ boot_file }}"
+        dest: "{{ router_tftp_root }}/boot.efi"
         mode: '0644'
         timeout: 60

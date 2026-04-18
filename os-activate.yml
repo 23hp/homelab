@@ -4,9 +4,10 @@
   gather_facts: false
   roles:
     - talos
+    - argocd
   vars:
     talos_tasks:
-      # - reset.yml
-      # - destroy.yml
       - activate.yml
-    talos_patches: []
+      # - patch.yml
+    # talos_patches: []
+    repo_url: 'https://github.com/23hp/immutable-gate-apps.git'

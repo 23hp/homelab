@@ -1,0 +1,10 @@
+---
+# [CAUTION] Wipe system DISK including the Talos OS and user partitions.
+- name: Format system disk
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - talos
+  vars:
+    talos_tasks:
+      - destroy.yml

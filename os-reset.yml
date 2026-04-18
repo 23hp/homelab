@@ -1,0 +1,10 @@
+---
+# [CAUTION] Wipe system partitions while keep user partitions data
+- name: Reset Talos Linux to maintainance mode
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - talos
+  vars:
+    talos_tasks:
+      - reset.yml
